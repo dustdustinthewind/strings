@@ -1,5 +1,4 @@
--- red = 9
-    --  thank you luchak friend! https://www.lexaloffle.com/bbs/?tid=47957
+-- thank you luchak friend! https://www.lexaloffle.com/bbs/?tid=47957
 red_string = actor:extend({
 
     rx={},
@@ -7,7 +6,7 @@ red_string = actor:extend({
     ru={},
     rv={},
     segs = 16,
-    seg_len = 1,
+    seg_len = 1.1,
 
     -- multigrid solve schedule, kind of overkill
     -- but hey, let's use all the cpu we got
@@ -15,14 +14,14 @@ red_string = actor:extend({
     -- here's a feasible one for 16 segments:
     steps={8, 4, 8, 4, 2, 1},
 
-    init = function(_ENV)
-        poke(0x5f2d,0x1)
-        mx, my = m.x, m.y
+    x1 = 0,
+    y1 = 0,
 
+    init = function(_ENV)
         -- init ribbon
         for i = 1, segs do
-            add(rx, mx+i*seg_len)
-            add(ry, my)
+            add(rx, x1)
+            add(ry, y1 + i * seg_len)
             add(ru, 0)
             add(rv, 0)
         end
@@ -40,8 +39,6 @@ red_string = actor:extend({
     dt = 1,
 
     update = function(_ENV)
-        mx, my = m.x, m.y-2
-
         local nx, ny = {}, {}
         for i = 1 , segs do
             local x,y,u,v=rx[i],ry[i],ru[i],rv[i]
@@ -56,23 +53,23 @@ red_string = actor:extend({
         for s in all(steps) do
             local step_seg_len=seg_len*s
             -- mouse point has infinite mass, so need to treat first segment specially
-            local dx,dy=nx[s]-mx,ny[s]-my
-            local dist=max(sqrt(dx*dx+dy*dy)/step_seg_len,1)
-            nx[s]=mx+dx/dist
-            ny[s]=my+dy/dist
+            local dx,dy=nx[s]-x1,ny[s]-y1
+            local dist=max(sqrt(dx*dx+dy*dy)/step_seg_len,seg_length)
+            nx[s]=x1+dx/dist
+            ny[s]=y1+dy/dist
             for i=s+s,segs,s do
                 local cx,cy,px,py=nx[i],ny[i],nx[i-s],ny[i-s]
                 local dx,dy=cx-px,cy-py
-                local dist=max(sqrt(dx*dx+dy*dy)/step_seg_len,1)
+                local dist=max(sqrt(dx*dx+dy*dy)/step_seg_len,seg_length)
                 dx/=dist
                 dy/=dist
-                cmx2=cx+px
-                nx[i]=(cmx2+dx)/2
-                nx[i-s]=(cmx2-dx)/2
-                cmy2=cy+py
+                cx12=cx+px
+                nx[i]=(cx12+dx)/2
+                nx[i-s]=(cx12-dx)/2
+                cy12=cy+py
                 -- limit y position so we have a floor
-                ny[i]=min((cmy2+dy)/2,127.9)
-                ny[i-s]=min((cmy2-dy)/2,127.9)
+                ny[i]=min((cy12+dy)/2,127.9)
+                ny[i-s]=min((cy12-dy)/2,127.9)
             end
         end
 
@@ -94,7 +91,7 @@ red_string = actor:extend({
     end,
 
     draw = function(_ENV)
-        line(mx, my, rx[1], ry[1], 14)
+        line(x1, y1, rx[1], ry[1], 14)
         for i = 2, segs do
             line(rx[i-1],ry[i-1],rx[i],ry[i],8)
         end

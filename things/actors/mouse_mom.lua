@@ -1,7 +1,4 @@
 -- mouse momager
---poke mouse
-poke(24365,1)
-
 mouse = actor:extend({
     click = 0,
     scroll = 0,
