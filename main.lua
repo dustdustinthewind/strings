@@ -7,17 +7,18 @@ function _init()
 
     m = mouse()
     h = heart()
+    s = red_string()
 end
 
 function _update60()
     m:update()
+    s:update()
     h:update()
-    --heart update
 end
 
 function _draw()
     cls()
     m:draw()
+    s:draw()
     h:draw()
-    --heart draw
 end

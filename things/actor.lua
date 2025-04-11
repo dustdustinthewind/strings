@@ -33,8 +33,7 @@ actor = thing:extend({
 
     init = function(_ENV)
         add(actor.roles, _ENV)
-        if (roles != actor.roles)
-            add(roles, _ENV)
+        if (roles != actor.roles) add(roles, _ENV)
     end,
 
 --[[
