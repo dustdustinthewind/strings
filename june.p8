@@ -2,12 +2,6 @@ pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
 #include main.lua
-	#include thing.lua
-		#include things/stage.lua
-		#include things/actor.lua
-		#include things/actors/mouse_mom.lua
-			#include things/actors/heart.lua
-		#include things/actors/red_string.lua
 __gfx__
 0000f000000c000007000700000000000f0000c000000f0000c00000000060000000000800000000000800000000000000000000000000000000000000000000
 00007f0f00c70700077070000008800007ffcc70000007fffc700000000060000000000800000000000800000000000000000000000000000000000000000000
