@@ -28,8 +28,9 @@ pin_string = sys({"string", "pinned"}, function(e)
 end)
 
 function birth_string(x, y, l, sl, g, f, c)
-  local x, y = x or 63, y or 5
   june_string = {
+    x = x,
+    y = y,
     len = l or 11,
     seg_len = sl or 1,
 

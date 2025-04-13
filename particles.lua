@@ -5,22 +5,21 @@ function a_blood_drop(x, y, vx, vy)
   + vel(v.x, v.y)
   + is_blood_drop()
   + can_draw(function(e)
-    circfill(e.pos.x, e.pos.y, e.part.r, 8)
+    circfill(e.pos.x, e.pos.y, e.part.r, e.part.col)
   end))
 end
 
 -- todo particalize rope?
 function is_blood_drop()
   return is_particle({
-    r = 1+rnd(1)*1.2,
-    friction = 0.9
+    r = (10+rnd(222))/100,
+    friction = 0.92,
+    col = rnd({8,14})
   }, function(e)
     e.vel.y += 0.2
-    printh(e.vel)
     e.vel *= e.part.friction
-    printh(e.vel)
     e.pos += e.vel
-    e.part.r -= 0.05
+    e.part.r -= 0.04
 
     if e.part.r <= 0 then
       del(particles, e)

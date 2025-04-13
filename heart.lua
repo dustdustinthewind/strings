@@ -1,8 +1,11 @@
 function a_heart()
   return ent{} + is_heart()
+    + pos(m.x, m.y)
+    + mouse_child()
     + can_draw(function(e)
-      spr(e.heart.sprite1, m.x-8, m.y-16, 1, 2)
-      spr(e.heart.sprite2,   m.x, m.y-16, 1, 2)
+      local _ENV = local_env(e)
+      spr(heart.sprite1, pos.x-8, pos.y-16, 1, 2)
+      spr(heart.sprite2,   pos.x, pos.y-16, 1, 2)
     end)
 end
 
@@ -36,12 +39,14 @@ beat_heart = sys({"heart"}, function(e)
       else
           on_beat = false
           sfx(2)
-          for i=1, rnd(3)+1 do
+          --printh(e.pos.py - e.pos.y)
+          for i=1, rnd(8)+2 do
             add(entities,
             a_blood_drop(
-              m.x - 2 -rnd(4),
-              m.y - 2 - rnd(5),
-              m.delta.x - rnd(2), m.delta.y+rnd(3)-2
+              e.pos.x - 2 -rnd(4),
+              e.pos.y - 2 - rnd(5),
+              e.pos.delta.x - rnd(2),
+              e.pos.delta.y + rnd(2)-0.5
             ), 2)
           end
           spr_counter = 0

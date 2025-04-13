@@ -2,6 +2,8 @@
 --  fucking with sounds
 --  happens over time
 
+noop = function() end
+
 function _init()
   --june colors 🐕
   poke(0x5f2e,1)
@@ -11,6 +13,7 @@ function _init()
   h = a_heart()
   strings = {}
   particles = {}
+  children = {}
 
   -- will be drawn in order
   entities = {
@@ -18,7 +21,7 @@ function _init()
     --the whole screen
     ent{} + can_draw(function() rectfill(3, 0, 122, 128, 0) end),
     
-    a_heart_string(-1.9, -3.2, -2.5, -2.5),
+    a_heart_string(-0.9, -3.2, -2.5, -2.5),
     --a_heart_string(1.8, -3, 2.8, -2.2),
     a_heart_string(-4.2, -7, -5, -6),
     --a_heart_string(5, -6, 6, -6),
@@ -35,6 +38,11 @@ function _update60()
   string_dance(strings)
   pin_string(strings)
   partical_update(particles)
+
+  move_followers(entities)
+
+  -- not a misspelling, keep at end, ty
+  update_ppos({h})
 end
 
 function _draw()

@@ -1,7 +1,7 @@
 function pos(x, y)
- return cmp("pos", setmetatable({x = x, y = y}, {
+ return cmp("pos", setmetatable(
+  {x = x, y = y, px = x, py = y, delta = {x = 0, y = 0}}, {
   __add = function(self, b)
-    printh(b)
     self.x += b.x
     self.y += b.y
     return self
@@ -15,6 +15,10 @@ function vel(x, y)
       self.y *= b
       return self
     end}))
+end
+
+function follows(obj, interp, move)
+  return cmp("follows", {interp = interp or 1, obj = obj, move = move or noop})
 end
 
 --[[ has_phys

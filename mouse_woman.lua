@@ -1,4 +1,5 @@
 -- mouse womanager
+--todo make entity (pos specifically)
 poke(24365, 1)
 
 function get_mouse_state()
@@ -16,11 +17,12 @@ function get_mouse_state()
 }
 end
 
-function mouse_child(x, y)
-  return cmp("mouse_child", {x = x, y = y})
+function mouse_child(i)
+  return cmp("follows", {obj = m, interp = i or 0.1,
+  move = function(e)
+    local _ENV = local_env(e.follows)
+    e.pos.x = lerp(e.pos.x, m.x, interp)
+    e.pos.y = lerp(e.pos.y, m.y, interp)
+  end
+  })
 end
-
-follow_mouse_mom = sys({"mouse_child", "pos"}, function(e)
-  local _ENV = local_env(e)
-  pos.x, pos.y = m.x + mouse_child.x, m.y + mouse_child.y
-end)
