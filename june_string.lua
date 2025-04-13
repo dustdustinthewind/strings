@@ -1,12 +1,12 @@
 function a_string()
-  return ent{} + is_string()
-  + can_draw(draw_string)
+  return add(strings, ent{} + is_string()
+  + can_draw(draw_string))
 end
 
 function draw_string(e)
   for s in all(e.string.sticks) do
     if not s.hidden then
-      line(s.p0.x,s.p0.y,s.p1.x,s.p1.y,8)	
+      line(s.p0.x,s.p0.y,s.p1.x,s.p1.y,e.string.col)	
     end
   end
 end
@@ -15,8 +15,8 @@ end
              🐶  thank you mika-friend! 🐕
 gist.github.com/mika76/4b559a8096d73414e24dd5bfb83c54c9
 ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★]]
-function is_string(x, y, l, sl, b, g, f)
-  return cmp("string", birth_string(x,y,l,sl,b,g,f))
+function is_string(x, y, l, sl, g, f, c)
+  return cmp("string", birth_string(x,y,l,sl,g,f,c))
 end
 
 function pinned_string(pins, update)
@@ -27,19 +27,20 @@ pin_string = sys({"string", "pinned"}, function(e)
   for p in all(e.pinned.pins) do
     e.string.points[p].pinned = true
   end
-  printh("hai")
   e.pinned.update(e)
 end)
 
-function birth_string(x, y, l, sl, b, g, f)
+function birth_string(x, y, l, sl, g, f, c)
   local x, y = x or 63, y or 5
   june_string = {
     len = l or 11,
     seg_len = sl or 1,
 
-    bounce = b or 0.9,
+    --bounce = b or 0.9,
 	  gravity = g or 0.1,
 	  friction = f or 0.999,
+
+    col = c or 8
   }
   local points = {}
   local sticks = {}
@@ -74,11 +75,10 @@ end
 string_dance = sys({"string"}, function(e)
   local _ENV = local_env(e.string)
 
-  local friction, gravity, bounce = friction, gravity, bounce
+  local friction, gravity = friction, gravity
 
   local update_points = function()
     for p in all(points) do
-      printh(p)
       local _ENV = local_env(p)
       if not pinned then
         local vx,vy=(x-px)*friction,(y-py)*friction

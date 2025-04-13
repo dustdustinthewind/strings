@@ -5,17 +5,18 @@ function _init()
 
   m = get_mouse_state()
   h = a_heart()
+  strings = {}
 
   entities = {
     -- the curtains hide some of the play! we dont need to refresh
     --the whole screen
     ent{} + can_draw(function() rectfill(3, 0, 122, 128, 0) end),
     
-    a_heart_string(-1.5, -3, -2, -2),
-    a_heart_string(2, -3, 2, -2.2),
-    a_heart_string(-4.2, -6, -5, -5),
-    a_heart_string(6, -7, 7, -8),
-    a_heart_string(-6, -8, -7, -8),
+    a_heart_string(-0.9, -3.2, -2, -2.5),
+    a_heart_string(1.8, -3, 2.8, -2.2),
+    a_heart_string(-4.2, -7, -5, -6),
+    a_heart_string(5, -6, 6, -6),
+    a_heart_string(-6.4, -9, -7.2, -8.4),
     h,
 
     curtains(),
@@ -24,9 +25,9 @@ end
 
 function _update60()
   m = get_mouse_state()
-  beat_heart(entities)
-  string_dance(entities)
-  pin_string(entities)
+  beat_heart({h})
+  string_dance(strings)
+  pin_string(strings)
 end
 
 function _draw()
