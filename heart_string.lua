@@ -33,8 +33,9 @@ function is_heart_string(x, y, x2, y2)
   str = birth_string(
     m.x+x, m.y+y,
     rnd({3,4}), -- seg #
-    rnd({1.23,1.8,1.45})), -- seg_len
-    0.1111, .93 + rnd(3)/15, rnd({8,14}) --gravity friction color
+    rnd({1.23,1.8,1.45}), -- seg_len
+    0.1111, .93 + rnd(3)/15,
+    rnd({8,14})) --gravity friction color
   str.x2 = x2
   str.y2 = y2
   return cmp("string", str)
