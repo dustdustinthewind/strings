@@ -11,7 +11,7 @@ function draw_string(e)
   end
 end
 
---[[★★★★★★★★★★★★★★★★★★★★★★★★★★
+--[[★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
              🐶  thank you mika-friend! 🐕
 gist.github.com/mika76/4b559a8096d73414e24dd5bfb83c54c9
 ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★]]
@@ -19,15 +19,12 @@ function is_string(x, y, l, sl, g, f, c)
   return cmp("string", birth_string(x,y,l,sl,g,f,c))
 end
 
-function pinned_string(pins, update)
-  return cmp("pinned", {pins = pins, update = update})
+function pinned_string(pinned)
+  return cmp("pinned", {pinned = pinned})
 end
 
 pin_string = sys({"string", "pinned"}, function(e)
-  for p in all(e.pinned.pins) do
-    e.string.points[p].pinned = true
-  end
-  e.pinned.update(e)
+  e:pinned()
 end)
 
 function birth_string(x, y, l, sl, g, f, c)
@@ -40,7 +37,7 @@ function birth_string(x, y, l, sl, g, f, c)
 	  gravity = g or 0.1,
 	  friction = f or 0.999,
 
-    col = c or 8
+    col = c or 8,
   }
   local points = {}
   local sticks = {}

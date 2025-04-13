@@ -36,6 +36,14 @@ beat_heart = sys({"heart"}, function(e)
       else
           on_beat = false
           sfx(2)
+          for i=1, rnd(3)+1 do
+            add(entities,
+            a_blood_drop(
+              m.x - 2 -rnd(4),
+              m.y - 2 - rnd(5),
+              m.delta.x - rnd(2), m.delta.y+rnd(3)-2
+            ), 2)
+          end
           spr_counter = 0
       end
   else
