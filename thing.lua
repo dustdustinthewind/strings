@@ -1,27 +1,19 @@
--- thing 1.0
+-- thing 1.1
 -- by dust
 
 a_thing = function(tbl)
   return setmetatable({
-    -- queues
     update = a_script(),
     draw = a_script(),
   }, {
     __index = _ENV,
 
     __add = function(self, b)
-      local b = b or {}
-      assert(type(b) == "table")
-      for name,data in pairs(b) do
-        local is_update, is_draw =
-          name == "update", name == "draw"
-
-        if is_update then
-          add(self.update, data)
-        elseif is_draw then
-          add(self.draw, data)
-        else
+      for name,data in pairs(b or {}) do
+        if type(data)~="function" then
           self[name] = data
+        else
+          add(self[name], data)
         end
       end
       return self
