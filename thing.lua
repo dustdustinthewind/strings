@@ -1,4 +1,4 @@
--- thing 1.1
+-- thing 1.1.1
 -- by dust
 
 a_thing = function(tbl)
@@ -10,16 +10,16 @@ a_thing = function(tbl)
 
     __add = function(self, b)
       for name,data in pairs(b or {}) do
-        if type(data)~="function" then
-          self[name] = data
+        if name == "update" or name == "draw" then
+          add(self[name], data, #self+1)
         else
-          add(self[name], data)
+          self[name] = data
         end
       end
       return self
     end
-  })
-  + tbl -- important line but can be hard to see so comment
+  }) + tbl -- if a_thing{} has draw/update, we will add those to
+           -- the draw/update scripts
 end
 
 function a_script()
