@@ -5,7 +5,12 @@ __lua__
 #include helpfuls.lua
 
 #include thing.lua
-#include things/pos.lua
+
+#include things/a_string.lua
+
+#include things/vectors.lua
+#include things/verlet.lua
+
 #include things/mouse_woman.lua
 #include things/heart.lua
 

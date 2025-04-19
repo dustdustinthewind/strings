@@ -4,7 +4,7 @@ a_stage = function(tbl)
     layer = {
       a_layer{m}, -- pre-everything / background
       a_layer{}, -- stage
-      a_layer{}, -- foreground
+      a_layer{a_verltex(63,5)}, -- foreground
       a_layer{}, -- ui/ audience
     },
 
