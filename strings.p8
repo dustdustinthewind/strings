@@ -5,39 +5,6 @@ __lua__
 #include helpfuls.lua
 
 #include thing.lua
-
-#include things/a_string.lua
-
-#include things/vectors.lua
-#include things/verlet.lua
-
-#include things/mouse_woman.lua
-#include things/heart.lua
-
-#include theater.lua
-#include things/stage.lua
-
--- heart and curtains
-	--[[#include the_friend_library/tiny_ecs.lua
-	
-	#include play.lua
-	
-	#include components.lua
-	#include systems.lua
-	
-	#include june_string.lua
-	
-	#include mouse_woman.lua
-	
-	#include heart.lua
-	
-	#include heart_string.lua
-	
-	#include particles.lua
-	
-	#include curtains.lua
-	
-	#include helpfuls.lua]]
 __gfx__
 0000f000000c000000000000000000000f0000c000000f0000c00000000060000000000800000000000800005000000000000000000000000000000000000000
 00007f0f00c70000000000000000000007ffcc70000007fffc700000000060000000000800000000000800005000000000000000500000000000500000000000
