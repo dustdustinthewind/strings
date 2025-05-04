@@ -27,7 +27,7 @@ function _init()
   _set_fps(60)
   ::play::
     cls()
-    m.x, m.y, m.click, m.scroll = stat(32), stat(33), stat(34), stat(36)
+    --m.x, m.y, m.click, m.scroll = stat(32), stat(33), stat(34), stat(36)
     acs_frame()
     flip()
   goto play
@@ -38,7 +38,19 @@ end
 --  the actor, using the scripts here
 
 function acs_frame()
-  CUR_STAGE.update()
-  CUR_STAGE.draw()
-  CUR_STAGE.post_draw()
+  CUR_STAGE:update()
+  CUR_STAGE:draw()
+end
+
+function set_stage(stage)
+  CUR_STAGE = stage
+  CUR_WARDROBE = CUR_STAGE.wardrobe
+end
+
+-- act = table of costumes that represent actor
+-- returne index of actor
+-- ACTOR_IND = ADD_ACTOR{...}
+function add_actor(actor)
+  CUR_STAGE *= actor
+  return CUR_STAGE.last_index
 end

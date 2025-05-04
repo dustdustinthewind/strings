@@ -10,11 +10,20 @@
 --  set_stage()
 --  removed dependency on find() from outside acs
 -- v0.0.2.1 - 412 tokens
---  a_costume() does not add itself to cur_wadrobe anymore lol
+--  a_costume() does not add itself to cur_wardrobe anymore lol
 -- v0.0.3 - 481 tokens
 --  fixed bugs caused by v0.0.2.1 lol
 --  moved deep_copy() dependency into acs.lua darn, token uppage xd
 --  better support for {optional} costumes in script requirements
+-- v0.0.4 - 467 tokens
+--  removed post_draw() director
+--  removed set_stage(), add_actor() and CUR_STAGE/CUR_WARDROBE shenanigans
+--   im gonna use these still but i want them outside of acs
+--   instead of encouraging it as a default here
+--  STAGE += COSTUME only accepts costumes so default costume can
+--   be set
+--  stage:wardrobe(i) will return a "puppet" containing a reference
+--   to every costume in wardrobe with that index
 
 -- thanks to:
 --  katrinakitten friend!
@@ -34,35 +43,41 @@ function a_stage()
     last_index = -1,
 
     -- costumes / components
-    wardrobe = {},
+    wardrobe = setmetatable({}, {
+      -- CUR_STAGE:WARDROBE(ACTOR_INDEX) will return a "puppet" of that
+      --  actor. useful if you want to keep an eye on an actors
+      --  stats in one place
+      __call = function(self, _ENV, act_ind)
+        local puppet = setmetatable({}, { __index = _ENV })
+        for name, data in pairs(self) do
+          puppet[name] = data[act_ind]
+        end
+        return puppet
+      end
+    }),
     
     --directors direct cast to follow scripts
     --system managers
     update = a_director(),
     draw = a_director(),
-    post_draw = a_director(),
   },{
     __index = _ENV,
 
     -- add a costume to the wardrobe
     -- cur_stage += COSTUME
-    --  or
-    -- cur_stage += "COS_NAME"
-    __add = function(self, cos)
-      cos = _find_costume_name_from(cos)
-      
-      self.wardrobe[cos] = setmetatable({},{
+    __add = function(self, cos)      
+      self.wardrobe[cos._name] = setmetatable({_default = cos},{
         -- add a component to an actor (or more literally actor
         --  to the costume)
         -- cur_wardrobe[COSTUME_NAME] += ACTOR_INDEX
-        __add = function(self, actor_ind)
-          self[actor_ind] = cos
+        __add = function(self, act_ind)
+          self[act_ind] = deep_copy(self._default)
           return self
         end,
 
         -- cur_wardrobe[COSTUME_NAME] -= ACTOR_INDEX
-        __sub = function(self, actor_ind)
-          self[actor_ind] = nil
+        __sub = function(self, act_ind)
+          self[act_ind] = nil
           return self
         end,
       })
@@ -75,15 +90,14 @@ function a_stage()
     --  or
     -- cur_stage -= COSTUME
     __sub = function(self, cos)
-      cos = _find_costume_name_from(cos)
-
-      self.wardrobe[cos] = nil
+      self.wardrobe[cos._name or cos] = nil
       return self      
     end,
 
     -- hire an actor (in this case, a arr of components)
     --  actors are stars therefore
     -- cur_stage *= ACTOR
+    -- ACTOR is a list of costumes/costume names
     __mul = function(self, actor)
       local _ENV = self
 
@@ -96,9 +110,11 @@ function a_stage()
       end
 
       for cos in all(actor) do
-        wardrobe[_find_costume_name_from(cos)][index] = deep_copy(cos)
+        if (not cos._name) cos = wardrobe[cos]._default
+        wardrobe[cos._name or cos][index] = deep_copy(cos)
       end
 
+      last_index = index
       return self
     end,
 
@@ -138,9 +154,9 @@ end
 -- system manager
 function a_director()
   return setmetatable({},{
-    -- cur_stage.UPDATE(), cur_stage.DRAW(), cur_stage.POST_DRAW()
-    __call = function(self)
-      for i=1,#self do self[i]() end
+    -- cur_stage:UPDATE(), cur_stage:DRAW()
+    __call = function(self, stage)
+      for i=1,#self do self[i](stage) end
     end,
     
     -- cur_stage.UPDATE() += SCRIPT
@@ -155,23 +171,6 @@ function a_director()
       return self
     end,
   })
-end
-
-CUR_STAGE, CUR_WARDROBE = {}, {}
-
-function set_stage(stage)
-  CUR_STAGE = stage
-  CUR_WARDROBE = CUR_STAGE.wardrobe
-end
-
-set_stage(a_stage())
-
--- act = table of costumes that represent actor
--- returne index of actor
--- ACTOR_IND = CUR_STAGE:ADD_ACTOR{...}
-function add_actor(act)      
-  CUR_STAGE *= act     
-  return CUR_STAGE.last_index
 end
 
 -- component analog
@@ -191,28 +190,23 @@ function a_script(scr, ...)
     scr = scr,
     req_cos = {...},
   }, {
-    -- cur_stage.UPDATE(), cur_stage.DRAW(), cur_stage.POST_DRAW()
-    __call = function(self)
-      local _ENV = CUR_STAGE
-
+    __call = function(self, _ENV)
       -- check each member of the cast
       --  NOTE: this includes "fired" cast members. so, if theres
       --   a cast of 100 but all but #100 is fired, then this will
       --   still loop 100 times. performance implications? meh
       for a = 1, cast do
-        local puppet = setmetatable({}, { __index = _ENV })
+        local puppet = _ENV:wardrobe(a)
         
         for cos in all(self.req_cos) do
           -- if a non-costume table, its a list of optional costumes
           if not cos._name then
             for opt in all(cos) do
-              puppet[opt._name] = wardrobe[opt._name][a] or opt
+              puppet[opt._name] = puppet[opt._name] or opt
             end
           -- if they aren't wearing any of the required costumes
           --  for script then skip to the next actor
-          elseif wardrobe[cos._name][a] then
-            puppet[cos._name] = wardrobe[cos._name][a]
-          else
+          elseif not puppet[cos._name] then
             goto continue end
         end
 
@@ -224,14 +218,6 @@ function a_script(scr, ...)
 end
 
 -- helpers :3
-
-function _find_costume_name_from(cos)
-  -- if a table with "_name" then return it
-  if (cos._name) return cos._name
-  -- otherwise its prolly a string return what we got
-  return cos
-end
-
 function deep_copy(table)
   if (type(table) ~= "table") return table
 
