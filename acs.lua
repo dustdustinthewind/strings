@@ -9,6 +9,8 @@
 --  a_costume() now adds costume to CUR_WARDROBE if not already in
 --  set_stage()
 --  removed dependency on find() from outside acs
+-- v0.0.2.1 - 412 tokens
+--  a_costume() does not add itself to cur_wadrobe anymore lol
 
 -- thanks to:
 --  katrinakitten friend!
@@ -170,9 +172,6 @@ end
 
 -- component analog
 function a_costume(name, costume)
-  -- add costume to wadrobe if not there
-  if (not CUR_WARDROBE[name]) CUR_STAGE += name
-
   local data = costume or {}
   data._name = name
   return data
