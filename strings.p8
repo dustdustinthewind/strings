@@ -2,10 +2,13 @@ pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
 -- ecs 2 boogaloo
+-- helpers
 #include helpfuls.lua
 
+-- ecs
 #include acs.lua
 
+-- init & game loop
 #include director.lua
 __gfx__
 0000f000000c000000000000000000000f0000c000000f0000c00000000060000000000800000000000800005000000000000000000000000000000000000000
