@@ -1,15 +1,3 @@
-function deep_copy(table)
-  if (type(table) ~= "table") return table
-
-  local copy = {}
-  for name, data in pairs(table) do
-    copy[deep_copy(name)] = deep_copy(data)
-  end
-  setmetatable(copy, deep_copy(getmetatable(table)))
-  
-  return copy
-end
-
 function printall(table, name)
   printh((name or tostr(table))..":")
   for name, data in pairs(table) do
@@ -32,5 +20,5 @@ function local_env(new_env)
 end
 
 function lerp(a,b,t)
-  return a + t * (b-a)
+  return a + t * (b - a)
 end

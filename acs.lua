@@ -11,6 +11,10 @@
 --  removed dependency on find() from outside acs
 -- v0.0.2.1 - 412 tokens
 --  a_costume() does not add itself to cur_wadrobe anymore lol
+-- v0.0.3 - 481 tokens
+--  fixed bugs caused by v0.0.2.1 lol
+--  moved deep_copy() dependency into acs.lua darn, token uppage xd
+--  better support for {optional} costumes in script requirements
 
 -- thanks to:
 --  katrinakitten friend!
@@ -92,7 +96,7 @@ function a_stage()
       end
 
       for cos in all(actor) do
-        wardrobe[cos._name][index] = deep_copy(cos)
+        wardrobe[_find_costume_name_from(cos)][index] = deep_copy(cos)
       end
 
       return self
@@ -178,7 +182,10 @@ function a_costume(name, costume)
 end
 
 -- system analog
--- req_cos = table of costumes this script needs to run
+-- req_cos = list of costumes this script needs to run
+--            you can use optional costumes by putting them in a
+--            table within the list
+-- A_SCRIPT(SCRIPT_FUNC, REQ_COS, REQ_COS2, {OPT_COS, OPT_COS2})
 function a_script(scr, ...)
   return setmetatable({
     scr = scr,
@@ -196,9 +203,14 @@ function a_script(scr, ...)
         local puppet = setmetatable({}, { __index = _ENV })
         
         for cos in all(self.req_cos) do
+          -- if a non-costume table, its a list of optional costumes
+          if not cos._name then
+            for opt in all(cos) do
+              puppet[opt._name] = wardrobe[opt._name][a] or opt
+            end
           -- if they aren't wearing any of the required costumes
           --  for script then skip to the next actor
-          if wardrobe[cos._name][a] then
+          elseif wardrobe[cos._name][a] then
             puppet[cos._name] = wardrobe[cos._name][a]
           else
             goto continue end
@@ -211,10 +223,23 @@ function a_script(scr, ...)
   })
 end
 
+-- helpers :3
 
 function _find_costume_name_from(cos)
   -- if a table with "_name" then return it
   if (cos._name) return cos._name
   -- otherwise its prolly a string return what we got
   return cos
+end
+
+function deep_copy(table)
+  if (type(table) ~= "table") return table
+
+  local copy = {}
+  for name, data in pairs(table) do
+    copy[deep_copy(name)] = deep_copy(data)
+  end
+  setmetatable(copy, deep_copy(getmetatable(table)))
+
+  return copy
 end

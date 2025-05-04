@@ -9,24 +9,24 @@ function _init()
   c_pos = a_costume("pos", {x = 6, y = 6})
   c_col = a_costume("col", {col = 4})
 
-  actor1 = add_actor{c_pos}
-  actor2 = 2
+  _=(CUR_STAGE
+    + c_pos + c_col)
+    * {c_pos} * {c_pos, c_col}
+
 
   CUR_STAGE.update += a_script(function(_ENV)
     pos.x, pos.y = rnd(128), rnd(128)
   end, c_pos)
 
-  CUR_STAGE.draw += a_script(function(_ENV)
+  _=CUR_STAGE.draw
+  + a_script(function(_ENV)
     -- example of 'optional' costume
-    -- BECAREFUL OF POTENTIAL GLOBALS NAMED THE SAME lol
-    local c = 7
-    if (col) c = col.col
-    pset(pos.x, pos.y, c)
-  end, c_pos)
+    pset(pos.x, pos.y, col.col)
+  end, c_pos, {a_costume("col", {col=7})})
 
   _set_fps(60)
-  cls()
   ::play::
+    cls()
     m.x, m.y, m.click, m.scroll = stat(32), stat(33), stat(34), stat(36)
     acs_frame()
     flip()
