@@ -65,7 +65,7 @@ function a_stage()
 
     -- add a costume to the wardrobe
     -- cur_stage += COSTUME
-    __add = function(self, cos)      
+    __add = function(self, cos)
       self.wardrobe[cos._name] = setmetatable({_default = cos},{
         -- add a component to an actor (or more literally actor
         --  to the costume)
@@ -185,29 +185,32 @@ end
 --            you can use optional costumes by putting them in a
 --            table within the list
 -- A_SCRIPT(SCRIPT_FUNC, REQ_COS, REQ_COS2, {OPT_COS, OPT_COS2})
-function a_script(scr, ...)
+function a_script(func, ...)
   return setmetatable({
-    scr = scr,
+    scr = func,
     req_cos = {...},
   }, {
     __call = function(self, _ENV)
       -- check each member of the cast
-      --  NOTE: this includes "fired" cast members. so, if theres
-      --   a cast of 100 but all but #100 is fired, then this will
-      --   still loop 100 times. performance implications? meh
+      -- NOTE: this includes "fired" cast members. so, if theres
+      --  a cast of 100 but all but #100 is fired, then this will
+      --  still loop 100 times. performance implications? meh
+      -- TODO: have systems track what indexes they're in charge of?
       for a = 1, cast do
         local puppet = _ENV:wardrobe(a)
         
         for cos in all(self.req_cos) do
           -- if a non-costume table, its a list of optional costumes
-          if not cos._name then
+          if not cos._name and type(cos) == "table" then
             for opt in all(cos) do
               puppet[opt._name] = puppet[opt._name] or opt
             end
+          -- if cos is costume or string
           -- if they aren't wearing any of the required costumes
           --  for script then skip to the next actor
-          elseif not puppet[cos._name] then
-            goto continue end
+          elseif not puppet[cos._name or cos] then
+            goto continue
+          end
         end
 
         self.scr(puppet)
