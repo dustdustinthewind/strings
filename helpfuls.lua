@@ -8,6 +8,16 @@ function printall(table, name)
   end
 end
 
+function stats(...)
+  local to_return = {}
+  local i = 1
+  for a in all{...} do
+    to_return[i] = stat(a)
+    i+=1
+  end
+  return unpack(to_return)
+end
+
 function find(table, value)
   for v in all(table) do
     if (v == value) return true 
