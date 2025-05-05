@@ -24,6 +24,9 @@
 --   be set
 --  stage:wardrobe(i) will return a "puppet" containing a reference
 --   to every costume in wardrobe with that index
+-- v0.0.4.1 - 475 tokens
+--  script.req_cos can include strings representing name instead
+--   of requiring explicilty costumes with COS._NAME
 
 -- thanks to:
 --  katrinakitten friend!
@@ -203,7 +206,7 @@ function a_script(func, ...)
           -- if a non-costume table, its a list of optional costumes
           if not cos._name and type(cos) == "table" then
             for opt in all(cos) do
-              puppet[opt._name] = puppet[opt._name] or opt
+              puppet[opt._name or opt] = puppet[opt._name or opt] or opt
             end
           -- if cos is costume or string
           -- if they aren't wearing any of the required costumes
