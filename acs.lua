@@ -27,6 +27,11 @@
 -- v0.0.4.1 - 475 tokens
 --  script.req_cos can include strings representing name instead
 --   of requiring explicilty costumes with COS._NAME
+-- v0.0.5 - 390 tokens
+--  removed reliance on deep_copy, manage your unwanted references
+--   outside of ACS
+--  removed WARDROBE +- INDEX syntax sugar, related to deep_copy
+--  can set a costume with "NAME" alone now
 
 -- thanks to:
 --  katrinakitten friend!
@@ -69,21 +74,7 @@ function a_stage()
     -- add a costume to the wardrobe
     -- cur_stage += COSTUME
     __add = function(self, cos)
-      self.wardrobe[cos._name] = setmetatable({_default = cos},{
-        -- add a component to an actor (or more literally actor
-        --  to the costume)
-        -- cur_wardrobe[COSTUME_NAME] += ACTOR_INDEX
-        __add = function(self, act_ind)
-          self[act_ind] = deep_copy(self._default)
-          return self
-        end,
-
-        -- cur_wardrobe[COSTUME_NAME] -= ACTOR_INDEX
-        __sub = function(self, act_ind)
-          self[act_ind] = nil
-          return self
-        end,
-      })
+      self.wardrobe[cos._name or cos] = {}
       
       return self
     end,
@@ -112,9 +103,10 @@ function a_stage()
         index = cast
       end
 
+      -- if you have a nil index value here, double check
+      --  that you have added the desired costume to the wardrobe
       for cos in all(actor) do
-        if (not cos._name) cos = wardrobe[cos]._default
-        wardrobe[cos._name or cos][index] = deep_copy(cos)
+        wardrobe[cos._name or cos][index] = cos
       end
 
       last_index = index
@@ -221,17 +213,4 @@ function a_script(func, ...)
       end
     end,
   })
-end
-
--- helpers :3
-function deep_copy(table)
-  if (type(table) ~= "table") return table
-
-  local copy = {}
-  for name, data in pairs(table) do
-    copy[deep_copy(name)] = deep_copy(data)
-  end
-  setmetatable(copy, deep_copy(getmetatable(table)))
-
-  return copy
 end

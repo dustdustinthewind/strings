@@ -29,6 +29,21 @@ function local_env(new_env)
   return setmetatable(new_env, {__index = _ENV})
 end
 
-function lerp(a,b,t)
-  return a + t * (b - a)
+-- a unity developer's overused and overshared sex toy
+-- a and b are anything that can have math done to it
+-- t is ideally a number from 0 to 1, i mean idfc i'm not your mom
+function lerp(a, b, t)
+  return a + (b - a) * t
+end
+
+function deep_copy(table)
+  if (type(table) ~= "table") return table
+
+  local copy = {}
+  for name, data in pairs(table) do
+    copy[deep_copy(name)] = deep_copy(data)
+  end
+  setmetatable(copy, deep_copy(getmetatable(table)))
+
+  return copy
 end
