@@ -1,3 +1,5 @@
+debug = true
+
 function _init()
   fps = 60
 
@@ -5,29 +7,28 @@ function _init()
   poke(0x5f2e,1)
   pal({[0]=0,129,2,11,137,130,143,7,8,9,10,138,12,140,136,14},1)
 
-  set_stage(a_stage())
-  c_pos = a_costume("pos", {x = 6, y = 6})
-  c_col = a_costume("col", {col = 4})
+  set_stage(a_stage()
+    + "pos"
+    + "follow"
+    + "mouse_simp"
+    + "heart")
 
-  _=(CUR_STAGE
-    + c_pos + c_col)
-    * {c_pos} * {c_pos, c_col}
+  make_mouse()
 
+  add_actor{a_heart()}
 
-  CUR_STAGE.update += a_script(function(_ENV)
-    pos.x, pos.y = rnd(128), rnd(128)
-  end, c_pos)
+  _=CUR_STAGE.update
+    + pre_update_ppos
+    + update_heart
+    + post_update_lerp_follow
 
   _=CUR_STAGE.draw
-  + a_script(function(_ENV)
-    -- example of 'optional' costume
-    pset(pos.x, pos.y, col.col)
-  end, c_pos, {a_costume("col", {col=7})})
+    + draw_simp
+    + draw_heart
 
   _set_fps(60)
   ::play::
     cls()
-    --m.x, m.y, m.click, m.scroll = stat(32), stat(33), stat(34), stat(36)
     acs_frame()
     flip()
   goto play

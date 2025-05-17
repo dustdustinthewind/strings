@@ -12,6 +12,7 @@ __lua__
 #include acs/cos/pos.lua
 
 #include acs/act/mouse_woman.lua
+#include acs/act/heart.lua
 
 -- init & game loop
 #include director.lua
