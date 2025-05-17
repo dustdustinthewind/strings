@@ -4,9 +4,14 @@ __lua__
 -- ecs 2 boogaloo
 -- helpers
 #include helpfuls.lua
+#include vector.lua
 
 -- ecs
 #include acs.lua
+
+#include acs/cos/pos.lua
+
+#include acs/act/mouse_woman.lua
 
 -- init & game loop
 #include director.lua
